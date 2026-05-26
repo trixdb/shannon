@@ -1,0 +1,53 @@
+# Trix App (SvelteKit frontend) pentest configuration
+# Browser-based testing for XSS, CSRF, auth bypass, client-side storage issues
+
+authentication:
+  login_type: form
+  login_url: "http://host.docker.internal:5173/login"
+  credentials:
+    username: "pentest@trix.test"
+    password: "PenTest!2026Secure"
+
+  login_flow:
+    - "Type $username into the email input field"
+    - "Type $password into the password input field"
+    - "Click the 'Sign in' or 'Log in' button"
+
+  success_condition:
+    type: url_contains
+    value: "/app"
+
+rules:
+  avoid:
+    - description: "Do not test account deletion"
+      type: path
+      url_path: "/app/settings/account"
+
+    - description: "Skip the about/static pages"
+      type: path
+      url_path: "/about"
+
+  focus:
+    - description: "Test chat input for XSS via message content"
+      type: path
+      url_path: "/app/chat/*"
+
+    - description: "Test registration for auth bypass and enumeration"
+      type: path
+      url_path: "/register"
+
+    - description: "Test password reset for token leaks and bypass"
+      type: path
+      url_path: "/forgot-password"
+
+    - description: "Test settings pages for CSRF and privilege escalation"
+      type: path
+      url_path: "/app/settings/*"
+
+    - description: "Test hub management for authorization bypass"
+      type: path
+      url_path: "/app/hub/*"
+
+    - description: "Test feed for stored XSS"
+      type: path
+      url_path: "/app/feed"

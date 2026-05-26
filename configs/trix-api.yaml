@@ -1,0 +1,63 @@
+# Trix API pentest configuration
+# API-key authenticated testing against the Trix memory API
+
+authentication:
+  login_type: api
+  login_url: "http://host.docker.internal:3737/auth/login"
+  credentials:
+    username: "pentest@trix.test"
+    password: "PenTest!2026Secure"
+  success_condition:
+    type: text_contains
+    value: "token"
+
+rules:
+  avoid:
+    - description: "Skip super-admin routes to avoid privilege confusion"
+      type: path
+      url_path: "/admin/*"
+
+    - description: "Do not delete the pentest account"
+      type: path
+      url_path: "/auth/account"
+
+  focus:
+    - description: "Test all memory CRUD operations for injection and auth bypass"
+      type: path
+      url_path: "/api/v1/memories/*"
+
+    - description: "Test search endpoints for injection and SSRF"
+      type: path
+      url_path: "/api/v1/search/*"
+
+    - description: "Test chat endpoint for prompt injection and auth issues"
+      type: path
+      url_path: "/v1/chat"
+
+    - description: "Test file upload for path traversal and unrestricted upload"
+      type: path
+      url_path: "/api/v1/files/*"
+
+    - description: "Test webhook creation for SSRF"
+      type: path
+      url_path: "/api/v1/webhooks/*"
+
+    - description: "Test relationship endpoints for auth bypass and injection"
+      type: path
+      url_path: "/api/v1/relationships/*"
+
+    - description: "Test OAuth integration flows for state fixation"
+      type: path
+      url_path: "/api/v1/integrations/*"
+
+    - description: "Test authentication endpoints for brute force and bypass"
+      type: path
+      url_path: "/auth/*"
+
+    - description: "Test batch operations for race conditions"
+      type: path
+      url_path: "/api/v1/memories/bulk/*"
+
+    - description: "Test cluster endpoints for injection"
+      type: path
+      url_path: "/api/v1/clusters/*"
