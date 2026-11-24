@@ -47,8 +47,9 @@ RUN git clone --depth 1 https://github.com/urbanadventurer/WhatWeb.git /opt/what
     echo 'cd /opt/whatweb && exec ./whatweb "$@"' >> /usr/local/bin/whatweb && \
     chmod +x /usr/local/bin/whatweb
 
-# Install Python-based tools
-RUN pip3 install --no-cache-dir schemathesis
+# Install Python-based tools (pinned so the image is reproducible; an unpinned
+# install silently takes whatever is latest at build time).
+RUN pip3 install --no-cache-dir schemathesis==4.34.1
 
 # Runtime stage - Minimal production image
 FROM cgr.dev/chainguard/wolfi-base:latest AS runtime
